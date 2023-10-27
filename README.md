@@ -11,8 +11,8 @@ name: Create nightly release
 on: workflow_dispatch
 
 jobs:
-  nightly:
-    name: Publish to GitHub Packages
+  publish:
+    name: Publish package
     runs-on: ubuntu-latest
     permissions:
       packages: write
@@ -27,7 +27,7 @@ jobs:
         name: Install pnpm
 
       - name: Set nightly version
-        uses: significantbit/nightly-versioning-action@main
+        uses: significantbit/nightly-versioning-action@v1
 
       - name: Publish package
         run: pnpm publish --no-git-checks --tag next
