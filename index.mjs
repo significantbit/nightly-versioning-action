@@ -6,13 +6,17 @@ import { parse } from 'semver'
 
 /**
  * Analyze package.json and prepare a new version
- * @param {string} commitHash Current commit hash
  */
-const getNewVersion = (commitHash) => {
+const getNewVersion = () => {
+  const commitHash = context.sha.substring(0, 7)
+  let version = getInput('version')
+
   const path = resolve(process.cwd(), 'package.json')
   const file = readFileSync(path, 'utf8')
   const pkg = JSON.parse(file)
-  const version = pkg.version
+
+  if (!version)
+    version = pkg.version
 
   if (!version)
     throw new Error('No version found in package.json')
@@ -39,7 +43,7 @@ const getNewVersion = (commitHash) => {
 
 try {
   // Get new version
-  const { version, writeFile } = getNewVersion(context.sha.substring(0, 7))
+  const { version, writeFile } = getNewVersion()
   console.log(`New version: ${version}`)
 
   // Write new version to package.json

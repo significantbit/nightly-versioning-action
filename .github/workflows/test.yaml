@@ -1,0 +1,26 @@
+name: Test
+
+on:
+  push:
+    branches:
+      - v2
+
+jobs:
+  release-please:
+    name: Create nightly version
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+
+      - name: Get version candidate from release-please
+        id: release-please
+        run:  npx release-please release-pr --dry-run --repo-url ${{ github.event.repository.full_name }} --token ${{ secrets.GITHUB_TOKEN }} --release-type node | grep -Po 'release \d.*' | grep -Po '\d.*' | xargs echo version= >> $GITHUB_OUTPUT
+
+      - name: Set nightly version
+        uses: significantbit/nightly-versioning-action@v2
+        with:
+          dry-run: true
+          version: ${{ steps.release-please.outputs.version }}
